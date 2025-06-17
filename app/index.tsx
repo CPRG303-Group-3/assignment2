@@ -1,6 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
+import credentials from "../credentials.json";
+import { useRouter } from "expo-router";
 
 export default function App() {
   const [username, setUsername] = useState("");
@@ -9,8 +11,12 @@ export default function App() {
   const [passwordError, setPasswordError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  const router = useRouter();
+
   const handleSignIn = () => {
     let valid = true;
+    let validated = false;
+    let validatedPass = false;
     setUsernameError("");
     setPasswordError("");
     setSuccessMessage("");
@@ -32,10 +38,38 @@ export default function App() {
     }
 
     if (valid) {
-      setSuccessMessage("Sign-in successful!");
+      for (const value of credentials.users) {
+        if (username == value.username) {
+          setUsernameError("");
+          validated = true;
+          console.log(value.username);
+          break;
+        }
+        setUsernameError("Username not found");
 
-      // Chioma and Harsimar please add the logic to check against credentials.json here!
+        // setSuccessMessage("Enter a valid username");
+        // console.log(value.username);
+      }
     }
+
+    if (valid && validated) {
+      for (const value of credentials.users) {
+        if (password == value.password) {
+          setPasswordError("");
+          validatedPass = true;
+          console.log(value.password);
+          break;
+        }
+        setPasswordError("Incorrect password entered.");
+      }
+    }
+
+    if (valid && validated && validatedPass) {
+      setSuccessMessage("Sign-in succesful");
+      router.push("/(tabs)");
+    }
+
+    // Chioma and Harsimar please add the logic to check against credentials.json here!
   };
 
   return (
