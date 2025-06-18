@@ -104,7 +104,7 @@ export default function App() {
         <Text style={styles.successText}>{successMessage}</Text>
       ) : null}
 
-      <StatusBar style="auto" />
+      <StatusBar />
     </View>
   );
 }

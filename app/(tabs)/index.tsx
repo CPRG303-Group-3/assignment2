@@ -1,5 +1,8 @@
 import { useRouter } from "expo-router";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import City from "../../components/city";
+import InterestingFact from "../../components/interestingfact";
+
 export default function WelcomeScreen() {
   const router = useRouter();
   return (
@@ -12,11 +15,13 @@ export default function WelcomeScreen() {
         }}
         accessibilityLabel="City of Calgary"
       />
-      <Pressable
-        onPress={() => router.push("https://www.calgary.ca/home.html")}
-      >
-        <Text style={styles.city}>Go to city page</Text>
-      </Pressable>
+      <City link="https://www.calgary.ca/home.html" />
+      <InterestingFact
+        city="Calgary"
+        population={1.414}
+        nickname="Cowtown"
+        festival="Stampede"
+      />
     </View>
   );
 }

@@ -1,5 +1,7 @@
 import { useRouter } from "expo-router";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import City from "../../components/city";
+import InterestingFact from "../../components/interestingfact";
 
 export default function WelcomePage() {
   const router = useRouter();
@@ -12,9 +14,13 @@ export default function WelcomePage() {
         }}
         accessibilityLabel="City of Edmonton"
       />
-      <Pressable onPress={() => router.push("https://www.edmonton.ca/")}>
-        <Text style={styles.city}>Go to city page</Text>
-      </Pressable>
+      <City link="https://www.edmonton.ca/" />
+      <InterestingFact
+        city="Edmonton"
+        population={1.087}
+        nickname="Festival City"
+        festival="Edmonton Heritage Festival"
+      />
     </View>
   );
 }
