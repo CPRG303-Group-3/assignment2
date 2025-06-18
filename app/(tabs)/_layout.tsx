@@ -10,12 +10,18 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Calgary",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="home" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="welcome"
         options={{
           title: "Edmonton",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="building" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>

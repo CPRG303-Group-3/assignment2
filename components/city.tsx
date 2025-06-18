@@ -18,5 +18,8 @@ const styles = StyleSheet.create({
   city: {
     textAlign: "center",
     fontSize: 16,
+    color: "#007AFF",
+    padding: 10,
+    textDecorationLine: "underline",
   },
 });

@@ -74,6 +74,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Assignment 2 - Tabs and Forms</Text>
       <Text style={styles.title}>Sign In</Text>
 
       <TextInput
@@ -112,10 +113,17 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f0f8ff",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+  },
+  header: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 80,
+    color: "#007bff",
+    textAlign: "center",
   },
   title: {
     fontSize: 24,
