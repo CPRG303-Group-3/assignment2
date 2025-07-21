@@ -3,12 +3,15 @@ import React, { use, useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
 import credentials from "../credentials.json";
 import { useRouter } from "expo-router";
+import { signInWithEmail } from "../utils/supabaseAuth";
 
 export default function App() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   const router = useRouter();
@@ -17,17 +20,28 @@ export default function App() {
     router.push("/signup");
   };
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     let valid = true;
-    let validated = false;
-    let validatedPass = false;
+    // let validated = false;
+    // let validatedPass = false;
     setUsernameError("");
     setPasswordError("");
     setSuccessMessage("");
+    setEmailError("");
 
-    // Username validation
-    if (username.length < 5) {
-      setUsernameError("Username must be at least 5 characters long.");
+    // // Username validation
+    // if (username.length < 5) {
+    //   setUsernameError("Username must be at least 5 characters long.");
+    //   valid = false;
+    // }
+
+    // Email validation
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (email.length < 1) {
+      setEmailError("Email address is required");
+      valid = false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError("Invalid email format");
       valid = false;
     }
 
@@ -41,37 +55,59 @@ export default function App() {
       valid = false;
     }
 
-    if (valid) {
-      for (const value of credentials.users) {
-        if (username == value.username) {
-          setUsernameError("");
-          validated = true;
-          console.log(value.username);
-          break;
-        }
-        setUsernameError("Username not found");
-
-        // setSuccessMessage("Enter a valid username");
-        // console.log(value.username);
+    try {
+      if (valid) {
+        console.log("Valid sign in");
+        await signInWithEmail(email, password).then(() =>
+          router.push("./(tabs)/landing")
+        );
+        alert("Sign-In succesful");
       }
+    } catch (error) {
+      console.log(error);
     }
+    // try {
+    //         if (valid) {
+    //             await signIn(email, password).then(() => router.push("./(tabs)/profile"));
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //         if (error.message === "Invalid login credentials") {
+    //             setLoginError("Invalid email and password combination");
+    //         }
+    //     }
 
-    if (valid && validated) {
-      for (const value of credentials.users) {
-        if (password == value.password) {
-          setPasswordError("");
-          validatedPass = true;
-          console.log(value.password);
-          break;
-        }
-        setPasswordError("Incorrect password entered.");
-      }
-    }
+    // if (valid) {
+    //   for (const value of credentials.users) {
+    //     if (username == value.username) {
+    //       setUsernameError("");
+    //       validated = true;
+    //       console.log(value.username);
+    //       break;
+    //     }
+    //     setUsernameError("Username not found");
 
-    if (valid && validated && validatedPass) {
-      setSuccessMessage("Sign-in succesful");
-      router.push("/(tabs)");
-    }
+    //     // setSuccessMessage("Enter a valid username");
+    //     // console.log(value.username);
+    //   }
+    // }
+
+    // if (valid && validated) {
+    //   for (const value of credentials.users) {
+    //     if (password == value.password) {
+    //       setPasswordError("");
+    //       validatedPass = true;
+    //       console.log(value.password);
+    //       break;
+    //     }
+    //     setPasswordError("Incorrect password entered.");
+    //   }
+    // }
+
+    // if (valid) {
+    //   setSuccessMessage("Sign-in succesful");
+    //   router.push("/(tabs)");
+    // }
 
     // Chioma and Harsimar please add the logic to check against credentials.json here!
   };
@@ -81,7 +117,7 @@ export default function App() {
       <Text style={styles.header}>Assignment 2 - Tabs and Forms</Text>
       <Text style={styles.title}>Sign In</Text>
 
-      <TextInput
+      {/* <TextInput
         style={styles.input}
         placeholder="Username"
         value={username}
@@ -90,7 +126,15 @@ export default function App() {
       />
       {usernameError ? (
         <Text style={styles.errorText}>{usernameError}</Text>
-      ) : null}
+      ) : null} */}
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+      />
+      {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
       <TextInput
         style={styles.input}

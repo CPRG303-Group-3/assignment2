@@ -12,23 +12,27 @@ export async function signUpWithEmail(
     password,
   });
 
-  console.log(error);
-  console.log(data.user);
-  if (error) throw error;
+  if (error) {
+    console.log("Error occured: ", error);
+    throw error;
+  }
 
   const user = data.user;
 
   if (user) {
     const { error: insertError } = await supabase.from("user_details").insert([
       {
-        UUID: user.id,
+        // UUID: user.id,
         "First Name": firstName,
         "Last Name": lastName,
-        Email: email,
+        "Email": email,
       },
     ]);
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      console.log("Insert error occured: ", insertError);
+      throw insertError;
+    }
   }
 
   return data;

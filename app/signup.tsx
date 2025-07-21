@@ -25,7 +25,7 @@ export default function SignUp() {
     router.push("/");
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     let validated = true;
 
     setFirstNameError("");
@@ -58,7 +58,18 @@ export default function SignUp() {
     }
 
     if (validated) {
-      signUpWithEmail(email, password, firstName, lastName);
+      try {
+        await signUpWithEmail(email, password, firstName, lastName);
+        alert("Sign Up Successful");
+      } catch (error: any) {
+        console.log("Error: ", error);
+
+        if (error.message == "User already registered") {
+          alert("Sign up unsuccesful\n User already exists with that email");
+        } else {
+          alert("Sign up unsuccesful");
+        }
+      }
     }
   };
 
@@ -123,10 +134,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#f0f8ff",
   },
   header: {
     fontSize: 30,
     marginBottom: 30,
+    fontWeight: "bold",
   },
   errorMessage: {
     color: "red",
