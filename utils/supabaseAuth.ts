@@ -1,41 +1,46 @@
-import { supabase } from '../lib/supabase'
+import { supabase } from "../lib/supabase";
 
 // 🔐 SIGN-UP FUNCTION
-export async function signUpWithEmail({ email, password, firstName, lastName }) {
+export async function signUpWithEmail(
+  email: string,
+  password: string,
+  firstName: string,
+  lastName: string
+) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-  })
+  });
 
-  if (error) throw error
+  console.log(error);
+  console.log(data.user);
+  if (error) throw error;
 
-  const user = data.user
+  const user = data.user;
 
   if (user) {
-    const { error: insertError } = await supabase
-      .from('user_details')
-      .insert([
-        {
-          UUID: user.id,
-          "First Name": firstName,
-          "Last Name": lastName,
-          Email: email,
-        },
-      ])
+    const { error: insertError } = await supabase.from("user_details").insert([
+      {
+        UUID: user.id,
+        "First Name": firstName,
+        "Last Name": lastName,
+        Email: email,
+      },
+    ]);
 
-    if (insertError) throw insertError
+    if (insertError) throw insertError;
   }
 
-  return data
+  return data;
 }
 
 // 🔐 SIGN-IN FUNCTION
-export async function signInWithEmail({ email, password }) {
+export async function signInWithEmail(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
-  })
+  });
 
-  if (error) throw error
-  return data
+  if (error) throw error;
+  return data;
 }

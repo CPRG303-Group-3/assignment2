@@ -13,6 +13,10 @@ export default function App() {
 
   const router = useRouter();
 
+  const handleSignUp = () => {
+    router.push("/signup");
+  };
+
   const handleSignIn = () => {
     let valid = true;
     let validated = false;
@@ -100,6 +104,8 @@ export default function App() {
       ) : null}
 
       <Button title="Sign In" onPress={handleSignIn} />
+
+      <Button title="Sign Up" onPress={handleSignUp} />
 
       {successMessage ? (
         <Text style={styles.successText}>{successMessage}</Text>
