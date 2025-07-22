@@ -7,13 +7,16 @@ export async function signUpWithEmail(
   firstName: string,
   lastName: string
 ) {
+  // Convert email to lowercase for consistent storage
+  const lowercaseEmail = email.toLowerCase();
+
   const { data, error } = await supabase.auth.signUp({
-    email,
+    email: lowercaseEmail,
     password,
   });
 
   if (error) {
-    console.log("Error occured: ", error);
+    console.log("Error occurred: ", error);
     throw error;
   }
 
@@ -22,15 +25,15 @@ export async function signUpWithEmail(
   if (user) {
     const { error: insertError } = await supabase.from("user_details").insert([
       {
-        // UUID: user.id,
+        // UUID: user.id - actually gets generated automatically from the auth table
         "First Name": firstName,
         "Last Name": lastName,
-        "Email": email,
+        Email: lowercaseEmail,
       },
     ]);
 
     if (insertError) {
-      console.log("Insert error occured: ", insertError);
+      console.log("Insert error occurred: ", insertError);
       throw insertError;
     }
   }
@@ -41,7 +44,7 @@ export async function signUpWithEmail(
 // 🔐 SIGN-IN FUNCTION
 export async function signInWithEmail(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({
-    email,
+    email: email.toLowerCase(),
     password,
   });
 

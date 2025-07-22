@@ -5,6 +5,10 @@ import {
   KeyboardAvoidingView,
   TextInput,
   Pressable,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -74,60 +78,88 @@ export default function SignUp() {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="height">
-      <Text style={styles.header}>Sign Up</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.header}>Sign Up</Text>
 
-      {firstNameError ? (
-        <Text style={styles.errorMessage}>{firstNameError}</Text>
-      ) : null}
-      <TextInput
-        style={styles.input}
-        placeholder="First Name"
-        value={firstName}
-        onChangeText={setFirstName}
-      />
+        <View style={styles.inputContainer}>
+          {firstNameError ? (
+            <Text style={styles.errorMessage}>{firstNameError}</Text>
+          ) : null}
+          <TextInput
+            style={styles.input}
+            placeholder="First Name"
+            value={firstName}
+            onChangeText={setFirstName}
+            placeholderTextColor="#a0a0a0"
+            autoCapitalize="words"
+          />
+        </View>
 
-      {lastNameError ? (
-        <Text style={styles.errorMessage}>{lastNameError}</Text>
-      ) : null}
-      <TextInput
-        style={styles.input}
-        placeholder="Last Name"
-        value={lastName}
-        onChangeText={setLastName}
-      />
+        <View style={styles.inputContainer}>
+          {lastNameError ? (
+            <Text style={styles.errorMessage}>{lastNameError}</Text>
+          ) : null}
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            value={lastName}
+            onChangeText={setLastName}
+            placeholderTextColor="#a0a0a0"
+            autoCapitalize="words"
+          />
+        </View>
 
-      {emailError ? (
-        <Text style={styles.errorMessage}>{emailError}</Text>
-      ) : null}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-      />
+        <View style={styles.inputContainer}>
+          {emailError ? (
+            <Text style={styles.errorMessage}>{emailError}</Text>
+          ) : null}
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            placeholderTextColor="#a0a0a0"
+          />
+        </View>
 
-      {passwordError ? (
-        <Text style={styles.errorMessage}>{passwordError}</Text>
-      ) : null}
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <View style={styles.inputContainer}>
+          {passwordError ? (
+            <Text style={styles.errorMessage}>{passwordError}</Text>
+          ) : null}
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholderTextColor="#a0a0a0"
+          />
+        </View>
 
-      <Pressable style={styles.button} onPress={handleSignUp}>
-        <Text style={{ color: "white" }}>Create Account</Text>
-      </Pressable>
+        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+          <Text style={styles.buttonText}>Create Account</Text>
+        </TouchableOpacity>
 
-      <Pressable onPress={goBack}>
-        <Text>Back to Sign In?</Text>
-      </Pressable>
+        <TouchableOpacity style={styles.backLink} onPress={goBack}>
+          <Text style={styles.backLinkText}>Back to Sign In?</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -136,29 +168,66 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#f0f8ff",
   },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+    width: SCREEN_WIDTH,
+    paddingHorizontal: 20,
+  },
   header: {
-    fontSize: 30,
+    fontSize: 32,
     marginBottom: 30,
     fontWeight: "bold",
+    color: "#333",
+    alignSelf: "center",
+  },
+  inputContainer: {
+    width: SCREEN_WIDTH - 40,
+    marginBottom: 15,
   },
   errorMessage: {
-    color: "red",
-    width: "80%",
+    color: "#dc3545",
+    fontSize: 12,
+    marginTop: 5,
+    marginLeft: 5,
   },
   input: {
-    width: "80%",
-    height: 40,
-    borderColor: "gray",
+    width: "100%",
+    height: 50,
+    borderColor: "#a0a0a0",
     borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    backgroundColor: "white",
+    fontSize: 16,
   },
   button: {
     backgroundColor: "#007bff",
-    padding: 10,
-    marginTop: 20,
+    padding: 15,
     borderRadius: 10,
-    marginBottom: 10,
+    width: SCREEN_WIDTH - 40,
+    alignItems: "center",
+    marginTop: 20,
+    shadowColor: "#007bff",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  backLink: {
+    marginTop: 15,
+    padding: 10,
+  },
+  backLinkText: {
+    color: "#007bff",
+    fontSize: 14,
+    alignSelf: "center",
   },
 });

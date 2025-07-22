@@ -1,9 +1,18 @@
 import { StatusBar } from "expo-status-bar";
-import React, { use, useState } from "react";
-import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
-import credentials from "../credentials.json";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  Dimensions,
+} from "react-native";
 import { useRouter } from "expo-router";
-import { signInWithEmail } from "../utils/supabaseAuth";
+import { useAuth } from "../context/AuthContext";
 
 export default function App() {
   const [username, setUsername] = useState("");
@@ -15,6 +24,7 @@ export default function App() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const router = useRouter();
+  const { signIn } = useAuth();
 
   const handleSignUp = () => {
     router.push("/signup");
@@ -22,18 +32,10 @@ export default function App() {
 
   const handleSignIn = async () => {
     let valid = true;
-    // let validated = false;
-    // let validatedPass = false;
     setUsernameError("");
     setPasswordError("");
     setSuccessMessage("");
     setEmailError("");
-
-    // // Username validation
-    // if (username.length < 5) {
-    //   setUsernameError("Username must be at least 5 characters long.");
-    //   valid = false;
-    // }
 
     // Email validation
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -58,144 +60,150 @@ export default function App() {
     try {
       if (valid) {
         console.log("Valid sign in");
-        await signInWithEmail(email, password).then(() =>
-          router.push("./(tabs)/landing")
-        );
-        alert("Sign-In succesful");
+        await signIn(email, password);
       }
     } catch (error) {
       console.log(error);
+      alert(
+        `Sign-in failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
-    // try {
-    //         if (valid) {
-    //             await signIn(email, password).then(() => router.push("./(tabs)/profile"));
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //         if (error.message === "Invalid login credentials") {
-    //             setLoginError("Invalid email and password combination");
-    //         }
-    //     }
-
-    // if (valid) {
-    //   for (const value of credentials.users) {
-    //     if (username == value.username) {
-    //       setUsernameError("");
-    //       validated = true;
-    //       console.log(value.username);
-    //       break;
-    //     }
-    //     setUsernameError("Username not found");
-
-    //     // setSuccessMessage("Enter a valid username");
-    //     // console.log(value.username);
-    //   }
-    // }
-
-    // if (valid && validated) {
-    //   for (const value of credentials.users) {
-    //     if (password == value.password) {
-    //       setPasswordError("");
-    //       validatedPass = true;
-    //       console.log(value.password);
-    //       break;
-    //     }
-    //     setPasswordError("Incorrect password entered.");
-    //   }
-    // }
-
-    // if (valid) {
-    //   setSuccessMessage("Sign-in succesful");
-    //   router.push("/(tabs)");
-    // }
-
-    // Chioma and Harsimar please add the logic to check against credentials.json here!
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Assignment 2 - Tabs and Forms</Text>
-      <Text style={styles.title}>Sign In</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.header}>Sign In</Text>
 
-      {/* <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        autoCapitalize="none"
-      />
-      {usernameError ? (
-        <Text style={styles.errorText}>{usernameError}</Text>
-      ) : null} */}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-      />
-      {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+        <View style={styles.inputContainer}>
+          {emailError ? (
+            <Text style={styles.errorMessage}>{emailError}</Text>
+          ) : null}
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            placeholderTextColor="#a0a0a0"
+          />
+        </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      {passwordError ? (
-        <Text style={styles.errorText}>{passwordError}</Text>
-      ) : null}
+        <View style={styles.inputContainer}>
+          {passwordError ? (
+            <Text style={styles.errorMessage}>{passwordError}</Text>
+          ) : null}
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholderTextColor="#a0a0a0"
+          />
+        </View>
 
-      <Button title="Sign In" onPress={handleSignIn} />
+        <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
 
-      <Button title="Sign Up" onPress={handleSignUp} />
+        <TouchableOpacity style={styles.signUpLink} onPress={handleSignUp}>
+          <Text style={styles.signUpLinkText}>Sign Up</Text>
+        </TouchableOpacity>
 
-      {successMessage ? (
-        <Text style={styles.successText}>{successMessage}</Text>
-      ) : null}
+        {successMessage ? (
+          <Text style={styles.successText}>{successMessage}</Text>
+        ) : null}
 
-      <StatusBar />
-    </View>
+        <StatusBar />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f0f8ff",
-    alignItems: "center",
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: "center",
-    padding: 20,
+    alignItems: "center",
+    paddingVertical: 20,
+    width: SCREEN_WIDTH,
+    paddingHorizontal: 20,
   },
   header: {
-    fontSize: 28,
+    fontSize: 32,
+    marginBottom: 30,
     fontWeight: "bold",
-    marginBottom: 80,
-    color: "#007bff",
-    textAlign: "center",
+    color: "#333",
+    alignSelf: "center",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+  inputContainer: {
+    width: SCREEN_WIDTH - 40,
+    marginBottom: 15,
   },
   input: {
     width: "100%",
-    height: 40,
-    borderColor: "gray",
+    height: 50,
+    borderColor: "#a0a0a0",
     borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    backgroundColor: "white",
+    fontSize: 16,
   },
-  errorText: {
-    color: "red",
-    marginBottom: 10,
-    alignSelf: "flex-start",
+  errorMessage: {
+    color: "#dc3545",
+    fontSize: 12,
+    marginTop: 5,
+    marginLeft: 5,
+  },
+  button: {
+    backgroundColor: "#007bff",
+    padding: 15,
+    borderRadius: 10,
+    width: SCREEN_WIDTH - 40,
+    alignItems: "center",
+    marginTop: 20,
+    shadowColor: "#007bff",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  signUpLink: {
+    marginTop: 15,
+    padding: 10,
+  },
+  signUpLinkText: {
+    color: "#007bff",
+    fontSize: 14,
+    alignSelf: "center",
   },
   successText: {
     color: "green",
     marginTop: 10,
+    alignSelf: "center",
   },
 });
