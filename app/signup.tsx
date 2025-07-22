@@ -64,7 +64,9 @@ export default function SignUp() {
     if (validated) {
       try {
         await signUpWithEmail(email, password, firstName, lastName);
-        alert("Sign Up Successful");
+        alert(
+          "Sign Up Successful, please verify your email before signing in."
+        );
       } catch (error: any) {
         console.log("Error: ", error);
 

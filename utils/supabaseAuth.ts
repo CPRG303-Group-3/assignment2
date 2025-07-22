@@ -25,7 +25,7 @@ export async function signUpWithEmail(
   if (user) {
     const { error: insertError } = await supabase.from("user_details").insert([
       {
-        // UUID: user.id - actually gets generated automatically from the auth table
+        UUID: user.id, //- actually gets generated automatically from the auth table
         "First Name": firstName,
         "Last Name": lastName,
         Email: lowercaseEmail,
